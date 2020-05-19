@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+{% block title %}My Parties{% endblock %}
+
+{% block body %}
+<div class="container mt-3">
+    <div class="card mx-auto" style="max-width: 900px;">
+        <div class="card-body">
+            <h3 class="card-title">My Parties</h3>
+            <p class="card-text">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col">
+                                <h5>Party Name</h5>
+                            </div>
+                            <div class="col">
+                                <p class="text-right">12/02/2020 at 20:30</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <i class="fa fa-user text-success"></i>
+                                12 Guests Confirmed
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <i class="fa fa-user text-warning"></i>
+                                0 Guest Pending
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col">
+                            <a href="/invite"><button class="btn btn-secondary col" type="button">Invite Someone</button></a>
+                            </div>
+                        </div>
+                        <ul class="list-group">
+                            <li class="list-group-item" aria-disabled="true">
+                                <div class="row">
+                                    <div class="col-8">
+                                        User Name (username)
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-success float-right" type="button">
+                                            <i class="fa fa-check"></i>
+                                        </button>
+                                        <button class="btn btn-danger float-right" type="button">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item" aria-disabled="true">
+                                <div class="row">
+                                    <div class="col-8">
+                                        User Name (username)
+                                    </div>
+                                    <div class="col-4 text-right">
+                                        Confirmed
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+
+                        <button class="btn btn-danger mt-4 float-right" type="button">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                        
+                    </li>
+                </ul>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

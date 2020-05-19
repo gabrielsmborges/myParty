@@ -1,0 +1,66 @@
+{% extends "layout.html" %} {% block title %} Home {% endblock%} {% block body %}
+<div class="container mt-3">
+    <h3>{{ name }}</h3>
+</div>
+<div class="container mt-3">
+    <div class="row ">
+        <div class="col-md-6 my-2">
+            <div class="card my-cards ">
+                <div class="card-header bg-info text-white">
+                    Invitations
+                </div>
+                <ul class="list-group text-center">
+                    <li class="list-group-item">A simple primary list group item</li>
+                    <li class="list-group-item">A simple primary list group item</li>
+                    <li class="list-group-item">A simple primary list group item</li>
+                    <li class="list-group-item">A simple primary list group item</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6 my-2">
+            <div class="card my-cards">
+                <div class="card-header bg-success text-white">
+                    My Parties
+                    <a href="/create"><i class="fa fa-plus" style="position: absolute; right: 20px; top:15px; color: white;"></i></a>
+                </div>
+                <ul class="list-group">
+                    {% if len_parties == 0 %}
+                    <li class="list-group-item">
+                        No Parties Found
+                    </li>
+                    {% else %}
+                        {% for el in parties %}
+                        <li class="list-group-item">
+                            <div class="container">
+                                <div class="row">
+                                <div class="col-6">
+                                    {{ el['name'] }}
+                                </div>
+                                <div class="col-4">
+                                    <div class="row">
+                                        {{ el['date_hour'].split(' ')[0].replace('-', '/') }}
+                                    </div>
+                                    <div class="row">
+                                        {{ ":".join(el['date_hour'].split(' ')[1].split(":")[:-1]) }}
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="row">
+                                        <p class="text-center">
+                                            <i class="fa fa-user"></i>
+                                            12
+                                        </p>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
