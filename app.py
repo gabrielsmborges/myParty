@@ -135,8 +135,10 @@ def create():
 @app.route('/myparties')
 @login_required
 def myparties():
-    return render_template('myparties.html')
+    parties = db.execute('SELECT * FROM parties WHERE host_id = ?', session['user_id'])
+    return render_template('myparties.html', parties = parties, db = db, datetime = datetime)
 
-@app.route('/invite')
+@app.route('/invite', methods=["POST"])
 def invite():
-    return render_template('invite.html')
+    party_code = request.form.get('party-code') 
+    return render_template('invite.html', code = party_code)

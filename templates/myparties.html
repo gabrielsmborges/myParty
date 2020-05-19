@@ -2,37 +2,59 @@
 {% block title %}My Parties{% endblock %}
 
 {% block body %}
+
 <div class="container mt-3">
     <div class="card mx-auto" style="max-width: 900px;">
         <div class="card-body">
             <h3 class="card-title">My Parties</h3>
             <p class="card-text">
                 <ul class="list-group">
-                    <li class="list-group-item">
+                    {% for el in parties %}
+                    <li class="list-group-item border border-secondary my-2">
                         <div class="row">
                             <div class="col">
-                                <h5>Party Name</h5>
+                                <h5>{{ el['name'] }}</h5>
                             </div>
                             <div class="col">
-                                <p class="text-right">12/02/2020 at 20:30</p>
+                                <p class="text-right">
+                                    <b>
+                                        {{ 
+                                            el['date_hour'].split(' ')[0].split('-')[2]
+                                        }}/{{ 
+                                            el['date_hour'].split(' ')[0].split('-')[1]
+                                        }}/{{ 
+                                            el['date_hour'].split(' ')[0].split('-')[0]
+                                        }}
+                                        at
+                                        {{
+                                            el['date_hour'].split(' ')[1].split(':')[0]
+                                        }}:{{
+                                            el['date_hour'].split(' ')[1].split(':')[1]
+                                        }}
+                                    </b>
+                                </p>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col">
                                 <i class="fa fa-user text-success"></i>
-                                12 Guests Confirmed
+                                {{ db.execute('SELECT COUNT(guest_id) FROM guests WHERE party_code = ? AND confirmed = 1', el['code'])[0]['COUNT(guest_id)'] }} Guests Confirmed
                             </div>
                         </div>
                         <div class="row">
                             <div class="col">
                                 <i class="fa fa-user text-warning"></i>
-                                0 Guest Pending
+                                {{ db.execute('SELECT COUNT(guest_id) FROM guests WHERE party_code = ? AND confirmed = 0', el['code'])[0]['COUNT(guest_id)'] }} Guests Pending
                             </div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col">
-                            <a href="/invite"><button class="btn btn-secondary col" type="button">Invite Someone</button></a>
-                            </div>
+                            <form method="post" action="/invite">
+                                <input type="text" value="{{ el['code'] }}" name = "party-code" hidden/>
+                                <div class="col">
+                                    <button class="btn btn-secondary col" type="submit">Invite People</button>
+                                </div>
+                                
+                            </form>
                         </div>
                         <ul class="list-group">
                             <li class="list-group-item" aria-disabled="true">
@@ -65,8 +87,8 @@
                         <button class="btn btn-danger mt-4 float-right" type="button">
                             <i class="fa fa-trash"></i>
                         </button>
-                        
                     </li>
+                    {% endfor %}
                 </ul>
             </p>
         </div>
