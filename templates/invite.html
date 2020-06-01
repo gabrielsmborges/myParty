@@ -1,23 +1,24 @@
 {% extends "layout.html" %}
-{% block title %}My Parties{% endblock %}
+{% block title %}Invite{% endblock %}
 
 {% block body %}
 <div class="container mt-3">
     <div class="card mx-auto" style="max-width: 400px;">
         <div class="card-body">
             <h3 class="card-title">Invite</h3>
-            <h2>{{ code }}</h2>
             <p class="card-text">
                 <div class="container">
-                    <form class="row" method="post" action="">
+                    <form class="row" method="post" action="/inviteuser">
                         <div class="col">
                             <div class="row">
-                                <input class="form-control" type="text" name="username" placeholder="Username:">
+                                <input class="form-control" type="text" name="username" placeholder="Username:" required>
+                                <input type="text" value="{{code}}" name="code" hidden>
                             </div>
                             <div class="row">
                                 <button class="btn btn-primary mx-auto mt-3" type="submit">Invite</button>
                             </div>
                         </div>
+                        
                     </form>
                 </div>
             </p>

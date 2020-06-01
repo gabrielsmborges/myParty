@@ -1,0 +1,100 @@
+{% extends "layout.html" %}
+
+{% block title %}
+My Invitations
+{% endblock %}
+
+
+{% block body %}
+<div class="container mt-3">
+    <div class="card mx-auto" style="max-width: 900px;">
+        <div class="card-body">
+            <h3 class="card-title">My Invitations</h3>
+            <p class="card-text">
+                <ul class="list-group">
+                    {% for el in invitations %}
+                    <li class="list-group-item">
+                        <form action="/accept_invitation" method="post">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-flex flex-row">
+                                        <h5>{{ db.execute('SELECT name FROM parties WHERE code = ?', el['party_code'])[0]['name'] }}</h5>
+                                        &nbsp;
+                                        <span>({{ db.execute('SELECT date_hour FROM parties WHERE code = ?', el['party_code'])[0]['date_hour'].split(' ')[1][:5] }})</span>
+                                    </div>
+                                </div>
+                                <div class="col float-right text-right">
+                                    <b>{{ "/".join(db.execute('SELECT date_hour FROM parties WHERE code = ?', el['party_code'])[0]['date_hour'].split(' ')[0].split('-')[::-1]) }}</b>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <b>
+                                    Host:</b>{{ db.execute('SELECT users.name, users.last_names FROM guests JOIN parties ON guests.party_code = parties.code JOIN users ON users.id = parties.host_id WHERE code = ?', el['party_code'])[0]['name'] }}
+                                    {{ db.execute('SELECT users.name, users.last_names FROM guests JOIN parties ON guests.party_code = parties.code JOIN users ON users.id = parties.host_id WHERE code = ?', el['party_code'])[0]['last_names'] }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <b>Address:</b> {{ db.execute('SELECT address FROM parties WHERE code = ?', el['party_code'])[0]['address'] }}
+                                </div>
+                            </div>
+                            {% if el['confirmed'] == False %}
+                            {% if db.execute('SELECT * FROM requirements WHERE party_code = ?', el['party_code'])| length >= 1 %}
+                            <div class="container">
+                                <div class="row mt-3">
+                                    Requirements:
+                                </div>
+                            </div>
+                            <ul>
+                            {% for req in db.execute('SELECT * FROM requirements WHERE party_code = ?', el['party_code']) %}
+                                    <li>
+                                        {% if req['requirement_name'] == "money" %}
+                                            $ {{ req['amount']}}
+                                        {% else %}
+                                            {{ req['amount'] }}x{{ req['name'] }}
+                                        {% endif %}
+                                    </li>
+                            {% endfor %}
+                            </ul>
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <input class="form-control" type="text" name="element" placeholder="What will you bring ?">
+                                </div>
+                            </div>
+                        {% else %}
+                        <div class="row mt-2">
+                            <div class="col">
+                                <input class="form-control" type="text" name="element" placeholder="What will you bring ? (Optional)">
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="row mt-2 float-right">
+                            <div class="col">
+                                <input type="text" name="party_code" value="{{ el['party_code'] }}" hidden>
+                                <button class="btn btn-danger ml-1" type="submit" name="action" value="deny">Deny</button>
+                                <button class="btn btn-success" type="submit" name="action" value="accept">Accept</button>
+                            </div>
+                        </div>
+                    </form>
+                    {% else %}
+                    <div class="row">
+                        <div class="col float-right text-right">
+                            <div class="badge badge-success text-wrap" style="width: 6rem; height: 3rem">
+                                <div class="mt-2">
+                                    <i class="fa fa-check"></i>
+                                <p class="">Confirmed</p>
+                                </div>
+                              </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

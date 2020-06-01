@@ -40,7 +40,7 @@ Create Party
               <input type="checkbox" name="eighteen" id="eighteen">
               <label for="eighteen">18+</label>
             </div>
-            <input id="requirements-list" name="requirements-list" hidden>
+            <input id="requirements-list" name="requirements-list" value="" hidden>
             <div class="form-group">
               <h5>Requirements: </h5>
               <div class="container">
@@ -68,7 +68,8 @@ Create Party
     </div>
   </div>
   <script>
-
+    //Minimum date for a party is the actual day
+    document.getElementById("date").min = new Date().toISOString().split("T")[0];
 
     var requirements = 0
     const addReq = () => {

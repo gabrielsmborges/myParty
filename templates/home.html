@@ -9,11 +9,27 @@
                 <div class="card-header bg-info text-white">
                     Invitations
                 </div>
-                <ul class="list-group text-center">
-                    <li class="list-group-item">A simple primary list group item</li>
-                    <li class="list-group-item">A simple primary list group item</li>
-                    <li class="list-group-item">A simple primary list group item</li>
-                    <li class="list-group-item">A simple primary list group item</li>
+                <ul class="list-group">
+                    {% if len_invitations == 0 %}
+                    <li class="list-group-item">No Invitations Found</li>
+                    {% else %}
+                    {% for el in invitations %}
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col">
+                                {{ db.execute('SELECT name FROM parties WHERE code = ?', el['party_code'])[0]['name'] }}
+                            </div>
+                            <div class="col text-right">
+                                {% if el['confirmed'] == True %}
+                                Confirmed
+                                {% else %}
+                                Pending
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -48,7 +64,7 @@
                                     <div class="row">
                                         <p class="text-center">
                                             <i class="fa fa-user"></i>
-                                            12
+                                            {{ db.execute('SELECT COUNT(*) FROM guests WHERE party_code = ? AND confirmed = 1', el['code'])[0]['COUNT(*)'] }}
                                         </p>
                                     </div>
                                 </div>

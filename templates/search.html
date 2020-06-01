@@ -1,0 +1,116 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Search
+{% endblock %}
+
+{% block body %}
+<div class="container mt-3">
+    <div class="card mx-auto" style="max-width: 700px;">
+        <div class="card-body">
+            <h3 class="card-title">Search</h3>
+            <p class="card-text">
+                <div class="container">
+                    {% if data %}
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col">
+                                    {{ data["name"] }} ({{ data['date_hour'].split(' ')[1][:5] }})
+                                </div>
+                                <div class="col text-right">
+                                    <p><b>{{ "/".join(data['date_hour'].split(' ')[0].split('-')[::-1]) }}</b></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="col">
+                                        <b>Host:</b> {{ db.execute('SELECT name FROM users WHERE id = ?', data['host_id'])[0]['name'] }} {{ db.execute('SELECT last_names FROM users WHERE id = ?', data['host_id'])[0]['last_names'] }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="col">
+                                        <b>Address:</b>
+                                        {{ data['address'] }}
+                                    </div>
+                                </div>
+                            </div>
+                            <!--If requirements Exist -->
+                            {% if db.execute('SELECT * FROM requirements WHERE party_code = ?', data['code'])|length > 0 %}
+                            <div class="row">
+                                <div class="col">
+                                    <div class="col">
+                                        <b>Requirements:</b>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="col">
+                                        <ul>
+                                            {% for el in db.execute('SELECT * FROM requirements WHERE party_code = ?', data['code']) %}
+                                            <li>
+                                                {% if el['requirement_name'] == "money" %}
+                                                $ {{ el['amount'] }}
+                                                {% else %}
+                                                {{ el['amount'] }} x {{ el['requirement_name'] }}
+                                                {% endif %}
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <form action="/publicparticipate" method="post">
+                                <div class="row mt-2">
+                                    <input type="text" value="{{ data }}" name="data" hidden>
+                                    <div class="col-8">
+                                        <input class="form-control" type="text" name="bring" placeholder="What will you bring ?">
+                                    </div>
+                                    <div class="col-4 float-right">
+                                        <p class="text-right">
+                                            <button class="btn btn-success" type="submit">Participate</button>
+                                        </p>
+                                    </div>
+                                </div>
+                            </form>
+                            {% else %}
+                            <form action="/publicparticipate" method="post">
+                                <div class="row mt-2">
+                                    <input type="text" value="{{ data }}" name="data" hidden>
+                                    <div class="col-8">
+                                        <input class="form-control" type="text" name="bring" placeholder="What will you bring ? (Optional)">
+                                    </div>
+                                    <div class="col-4 float-right">
+                                        <p class="text-right">
+                                            <button class="btn btn-success" type="submit">Participate</button>
+                                        </p>
+                                    </div>
+                                </div>
+                            </form>
+                            {% endif %}
+                            <!--End If-->
+                        </li>
+                    </ul>
+                    {% else %}
+                    <form class="row" method="post" action="/search">
+                        <div class="col">
+                            <div class="row">
+                                <input class="form-control" type="text" name="party_code" placeholder="Party Code:" required>
+                                
+                            </div>
+                            <div class="row">
+                                <button class="btn btn-primary mx-auto mt-3" type="submit">Search</button>
+                            </div>
+                        </div>
+                        
+                    </form>
+                    {% endif %}
+                </div>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
