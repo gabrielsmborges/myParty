@@ -1,6 +1,5 @@
 # myParty
-This is [_gabrielsmborges_'](https://github.com/gabrielsmborges) final project for CS50 2020.\
-\
+
 **myParty** is a web application build powered by flask that help users organize parties.
 
 ## Getting Started
@@ -48,7 +47,3 @@ flask run
 * Extras
     * Adult parties don't accept under 18 users
     * The algorithm will remove the parties from the database 24h after its official date/hour.
-
-### Author
-
-* [Gabriel Borges](https://github.com/gabrielsmborges)
