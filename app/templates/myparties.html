@@ -1,0 +1,158 @@
+{% extends "layout.html" %}
+{% block title %}My Parties{% endblock %}
+
+{% block body %}
+
+<div class="container mt-3">
+    <div class="card mx-auto" style="max-width: 900px;">
+        <div class="card-body">
+            <h3 class="card-title">My Parties</h3>
+            <p class="card-text">
+                <ul class="list-group">
+                    {% if parties == [] or None %}
+                        <li class="list-group-item">No Parties Found</li>
+                    {% endif %}
+                    {% for el in parties %}
+                    <li class="list-group-item border border-secondary my-2">
+                        <div class="row">
+                            <div class="col">
+                                <h5>{{ el['name'] }}</h5>
+                            </div>
+                            <div class="col">
+                                <p class="text-right">
+                                    <b>
+                                        {{ 
+                                            el['date_hour'].split(' ')[0].split('-')[2]
+                                        }}/{{ 
+                                            el['date_hour'].split(' ')[0].split('-')[1]
+                                        }}/{{ 
+                                            el['date_hour'].split(' ')[0].split('-')[0]
+                                        }}
+                                        at
+                                        {{
+                                            el['date_hour'].split(' ')[1].split(':')[0]
+                                        }}:{{
+                                            el['date_hour'].split(' ')[1].split(':')[1]
+                                        }}
+                                    </b>
+                                </p>
+                            </div>
+                        </div>
+                        {% if el['public'] == True %}
+                        <div class="row">
+                            <div class="col">
+                                <b>Public Party</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <b>Code:</b> <h3>{{ el['code'] }}</h3>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="row">
+                            <div class="col">
+                                <i class="fa fa-user text-success"></i>
+                                {{ db.execute('SELECT COUNT(guest_id) FROM guests WHERE party_code = ? AND confirmed = 1', el['code'])[0]['COUNT(guest_id)'] }} Guests Confirmed
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <i class="fa fa-user text-warning"></i>
+                                {{ db.execute('SELECT COUNT(guest_id) FROM guests WHERE party_code = ? AND confirmed = 0', el['code'])[0]['COUNT(guest_id)'] }} Guests Pending
+                            </div>
+                        </div>
+                        <div class="row my-3">
+                            <form method="post" action="/invite">
+                                <input type="text" value="{{ el['code'] }}" name = "party-code" hidden/>
+                                <div class="col">
+                                    <button class="btn btn-secondary col" type="submit">Invite People</button>
+                                </div>
+                                
+                            </form>
+                        </div>
+                        <ul class="list-group">
+                            {% for i in db.execute('SELECT * FROM guests WHERE party_code = ?', el['code']) %}
+                            <li class="list-group-item" aria-disabled="true">
+                                <div class="row">
+                                    <div class="col-8">
+                                        {{ db.execute('SELECT name FROM users WHERE id = ?', i['guest_id'])[0]['name'] }} 
+                                        {{ db.execute('SELECT last_names FROM users WHERE id = ?', i['guest_id'])[0]['last_names'] }} 
+                                        ({{ db.execute('SELECT username FROM users WHERE id = ?', i['guest_id'])[0]['username'] }})
+                                    </div>
+                                    {% if el['public'] == True %}
+                                        {% if i['confirmed'] == False %}
+                                        <div class="col-4 text-right">
+                                            Pending
+                                        </div>
+                                        {% else %}
+                                        <div class="col-4 text-right">
+                                            Confirmed
+                                        </div>
+                                        {% if db.execute('SELECT element FROM bring WHERE guest_id = ? AND party_id = ?', i['guest_id'], el['code'])[0]['element'] != "" %}
+                                        <div class="row">
+                                            <div class="col ml-3">
+                                                <p>
+                                                    Bringing: {{ db.execute('SELECT element FROM bring WHERE guest_id = ? AND party_id = ?', i['guest_id'], el['code'])[0]['element'] }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        {% endif %}
+                                    {% else %}
+                                        {% if i['confirmed'] == False %}
+                                        <div class="col-4 text-right">
+                                            Pending
+                                        </div>
+                                        {% else %}
+                                        <div class="col-4 text-right">
+                                            Confirmed
+                                        </div>
+                                        {% if db.execute('SELECT element FROM bring WHERE guest_id = ? AND party_id = ?', i['guest_id'], el['code'])[0]['element'] != ""  %}
+                                        <div class="row">
+                                            <div class="col ml-3">
+                                                <p>
+                                                    Bringing: {{ db.execute('SELECT element FROM bring WHERE guest_id = ? AND party_id = ?', i['guest_id'], el['code'])[0]['element'] }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        <form action="/cancelparty" method="post">
+                            <input type="text" value="{{ el['code'] }}" name="party_code" hidden>
+                            <button class="btn btn-danger mt-4 float-right" type="submit">
+                                <i class="fa fa-trash"></i>Cancel Party
+                            </button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+<!--
+    <li class="list-group-item" aria-disabled="true">
+                                <div class="row">
+                                    <div class="col-8">
+                                        User Name (username)
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-success float-right" type="button">
+                                            <i class="fa fa-check"></i>
+                                        </button>
+                                        <button class="btn btn-danger float-right" type="button">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
+-->
